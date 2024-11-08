@@ -5,18 +5,26 @@ use scanner::{scan_port, generate_ip_range};
 use proxy_validator::validate_proxy;
 use std::net::{IpAddr, Ipv4Addr};
 use std::time::Instant;
-use tokio::io::{self, AsyncBufReadExt};
 use futures::future::join_all;
+use std::env;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let start_time = Instant::now();
 
-    println!("请输入网段（格式: 192.168.1.0/24）:");
-    let mut input = String::new();
-    let mut stdin = io::BufReader::new(io::stdin());
-    stdin.read_line(&mut input).await?;
-    let input = input.trim();
+    // 获取命令行参数
+    let args: Vec<String> = env::args().collect();
+
+    if args.contains(&"-h".to_string()) {
+        println!("使用方式: \n  -ips <网段>    指定要扫描的网段 (例如: 192.168.1.0/24)\n  -h            显示帮助信息");
+        return Ok(());
+    }
+
+    let input = if let Some(idx) = args.iter().position(|x| x == "-ips") {
+        args.get(idx + 1).map(|s| s.as_str()).unwrap_or("192.168.1.0/24")
+    } else {
+        "192.168.1.0/24"
+    };
 
     let (base_ip_str, mask_str) = input.split_once('/').unwrap_or(("192.168.1.0", "24"));
     let base_ip: Ipv4Addr = base_ip_str.parse()?;
@@ -49,14 +57,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             } else {
                 validate_proxy(&format!("{}:{}", result.ip, result.port)).await.unwrap_or("Unknown".to_string())
             };
-            println!("IP {} - 端口 {:5} - 开放 - 协议: {}", result.ip, result.port, protocol);
+            println!("IP {}:{:5} - 开放 - 协议: {}", result.ip, result.port, protocol);
         }
     }
 
     let duration = start_time.elapsed();
     
-    println!("
-扫描统计:");
+    println!("扫描统计:");
     println!("------------------------");
     println!("扫描总IP数: {}", ip_range.len());
     println!("扫描端口数: {}", ports_to_scan.len());

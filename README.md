@@ -15,8 +15,8 @@
 请确保已安装 [Rust](https://www.rust-lang.org/) 编译器。
 
 ```bash
-git clone https://github.com/your-username/port_scan.git
-cd port_scan
+git clone --depth 1 https://github.com/XiaomingX/RustProxyHunter.git
+cd RustProxyHunter
 cargo build --release
 ```
 

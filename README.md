@@ -41,6 +41,16 @@ cargo run --release
 ./release/port_scanner
 ```
 
+## 如果你对网络安全感兴趣，如下开源代码不容错过：
+ - rust实现的端口扫描器：
+   - https://github.com/XiaomingX/RustProxyHunter
+ - python实现的代理池检测：
+   - https://github.com/XiaomingX/proxy-pool
+ - golang实现的供应链安全，CVE-POC的全自动收集（注无人工审核，可能被投毒，仅限有基础的朋友）：
+   - https://github.com/XiaomingX/data-cve-poc
+ - python实现的检查.git泄漏的工具
+   - https://github.com/XiaomingX/github-sensitive-hack
+
 ## 可监控的网段
 
 ### 阿里云
